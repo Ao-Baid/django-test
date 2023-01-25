@@ -3,6 +3,7 @@ import datetime
 # Create your views here.
 from . models import Book, Author, BookInstance, Genre
 from django.views import generic
+from django.db.models import Count, Q
 
 def index(request):
     now = datetime.datetime.now()
@@ -50,6 +51,8 @@ class AuthorListView(generic.ListView):
     context_object_name = 'author_list'  # your own name for the list as a template variable
     template_name = 'authors/my_arbitrary_template_name_list.html'  # Specify your own template name/location
 
+
+
     def get_queryset(self):
         return Author.objects.all()
     
@@ -58,7 +61,19 @@ class AuthorListView(generic.ListView):
         context = super(AuthorListView, self).get_context_data(**kwargs)
         # Create any data and add it to the context
         context['some_data'] = 'This is just some data'
+        queryset = Book.objects.filter(author__in=Author.objects.filter())
+        context['authored_books'] = queryset
         return context
 
 class AuthorDetailView(generic.DetailView):
     model = Author
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get the context
+        context = super(AuthorDetailView, self).get_context_data(**kwargs)
+        # Create any data and add it to the context
+        context['some_data'] = 'This is just some data'
+        context['authored_books'] = "test"
+        return context
+
+    

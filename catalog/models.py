@@ -27,7 +27,7 @@ class Genre(models.Model): # model.Model is a class that represents a database t
 
 class Book(models.Model):
     title = models.CharField(max_length=200) # title is a field of the Book model
-    author = models.ForeignKey('Author', on_delete=models.SET_NULL, null=True) # author is a field of the Book model
+    author = models.ForeignKey('Author', on_delete=models.SET_NULL, null=True,) # author is a field of the Book model
     summary = models.TextField(max_length=1000, help_text="Enter a brief description of the book")
     isbn = models.CharField('ISBN', max_length=13, help_text='13 Character <a href="https://www.isbn-international.org/content/what-isbn">ISBN number</a>')
     genre = models.ManyToManyField(Genre, help_text="Select a genre for this book") #many to many relationship because a book can have many genres and a genre can have many books
@@ -78,5 +78,8 @@ class Author(models.Model):
 
     def __str__(self):
         return '%s, %s' % (self.last_name, self.first_name)
+    
+    def get_authored_books(self):
+        return Book.objects.filter(author=self.id).count()
 
     

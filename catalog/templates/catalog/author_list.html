@@ -5,7 +5,7 @@
    {% if author_list %}
     <ul>
     {% for author in author_list %}
-        <li><a href="{{ author.get_absolute_url }}">{{ author }}</a></li>
+        <li><a href="{{ author.get_absolute_url }}">{{ author }}: {{ author.get_authored_books }}</a></li>
         {% endfor %}
     </ul>
     {% else %}
