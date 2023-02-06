@@ -70,6 +70,9 @@ class Author(models.Model):
     date_of_birth = models.DateField(null=True, blank=True)
     date_of_death = models.DateField('Died', null=True, blank=True)
 
+    def prefetch(self):
+        return Book.objects.prefetch_related('author').filter(author=self.id)
+
     class Meta:
         ordering = ["last_name"]
 
@@ -81,5 +84,8 @@ class Author(models.Model):
     
     def get_authored_books(self):
         return Book.objects.filter(author=self.id).count()
+    
+    def get_authored_books_list(self):
+        return Book.objects.filter(author=self.id)
 
     

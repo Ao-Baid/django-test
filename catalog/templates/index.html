@@ -6,7 +6,7 @@
 {% block content %}
   <h1>Local Library Home</h1>
   <p>Welcome to LocalLibrary, a website developed by <em>Mozilla Developer Network</em>!</p>
-  <p>Time of arrival is {{cur_time}}.</p>
+  <p>Time of arrival is {{cur_time}}. and you have visited this page {{num_visits}} time{{num_visits|pluralize}}</p>
   <p>The library has the following record counts:</p>
   <ul>
     <li><strong>Books:</strong> {{ num_books }}</li>
@@ -14,4 +14,10 @@
     <li><strong>Copies available:</strong> {{ num_instances_available }}</li>
     <li><strong>Authors:</strong> {{ num_authors }}</li>
   </ul>
+  {% if user.is_authenticated %}
+    <p><a href="{% url 'logout' %}">Logout</a></p>
+  {% else %}
+    <p><a href="{% url 'login' %}">login</a></p>
+  {% endif %}
+    
 {% endblock %}
