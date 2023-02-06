@@ -1,6 +1,5 @@
 from django.shortcuts import render
 import datetime
-# Create your views here.
 from . models import Book, Author, BookInstance, Genre
 from django.views import generic
 from django.shortcuts import render, HttpResponseRedirect, redirect
@@ -9,29 +8,58 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from .forms import LoginForm, SignUpForm
 
-@login_required
+
 def logout_user(request):
     logout(request)
-    return render(request, 'logged_out.html')
+    test = "test"
+    context = {test : "test"}
+    return render(request, 'logged_out.html', context=context)
 
-def login_user(request):
+#create a login view using the login form
+
+
+#create a login view that uses the form from LoginForm
+def login_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                return HttpResponseRedirect(reverse('index'))
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return HttpResponseRedirect(reverse('index'))
+                else:
+                    return render(request, 'account_disabled.html')
             else:
-                return render(request, 'login.html', {'error_message': 'Your account has been disabled'})
-        else:
-            return render(request, 'login.html', {'error_message': 'Invalid login'})
-    return render(request, 'login.html')
+                return render(request, 'invalid_login.html')
+    else:
+        form = LoginForm()
+    return render(request, 'registration/login.html', {'form': form})
 
 
-@login_required
+
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            password2 = form.cleaned_data['password2']
+            email = form.cleaned_data['email']
+            user = User.objects.create_user(username=username, password=password, email=email)
+            user.save()
+            return HttpResponseRedirect(reverse('index'))
+    else:
+        form = SignUpForm()
+    return render(request, 'registration/sign_up.html', {'form': form})
+
+
+
 def index(request):
     now = datetime.datetime.now()
     num_books = Book.objects.all().count()
@@ -55,6 +83,7 @@ def index(request):
         'num_genres': num_genres,
         'num_visits': num_visits,
         'cur_time': now.strftime('%Y-%m-%d %H:%M:%S'),
+        'form': LoginForm(),
     }
 
     return render(request, 'index.html', context=context) #render the html template index.html with the data in the context variable

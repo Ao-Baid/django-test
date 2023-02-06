@@ -3,7 +3,6 @@ from django.urls import reverse
 # Create your models here.
 import uuid # Required for unique book instances
 
-
 #create a variable storing 10 different languages
 LANGUAGES = (
     ('en', 'English'),
@@ -89,3 +88,7 @@ class Author(models.Model):
         return Book.objects.filter(author=self.id)
 
     
+
+
+
+

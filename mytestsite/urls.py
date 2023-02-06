@@ -21,15 +21,18 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
-
+from catalog.views import login_view, signup_view
 logout_view = login_required(auth_views.LogoutView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/login/', login_view, name='login'),
     path('catalog/', include('catalog.urls')),
     path('', RedirectView.as_view(url='/catalog/', permanent=True)),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/logout/', logout_view, name='logout'),
+    path('accounts/signup/', signup_view, name='signup'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
 
 
